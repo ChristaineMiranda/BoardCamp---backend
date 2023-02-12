@@ -10,5 +10,14 @@ export async function createGame(req, res){
      } catch (error) {
         res.status(500).send(error.message);
      }
+}
 
+export async function showGames(req, res){
+   try {
+      const results = await connection.query(`SELECT * FROM games;`);
+      res.status(200).send(results.rows);
+      
+   } catch (error) {
+      res.status(500).send(error.message);
+   }
 }
