@@ -1,7 +1,13 @@
 import connection from '../config/database.js';
 
 export default async function checkRental(req, res, next){
-    const {customerId, gameId} = req.body;
+    const {customerId, gameId, daysRented} = req.body;
+
+    if(daysRented <=0 || isNaN(customerId) || customerId <=0 || isNaN(gameId) || gameId<= 0){
+        return res.status(400).send("Preencha corretamente os campos");
+    }
+
+
     try {
         const validCustomer = await connection.query(`SELECT * FROM customers WHERE id=$1;`, [customerId]);
         if(!validCustomer.rows.length){
