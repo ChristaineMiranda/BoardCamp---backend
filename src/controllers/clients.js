@@ -42,7 +42,7 @@ export async function updateClient(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
     try {
-        await connection.query(`UPDATE customers SET name = $1, phone = $2, cpf=$3, birthday=$4 WHERE id=${id};`, [name, phone, cpf, birthday]);
+        await connection.query(`UPDATE customers SET name = $1, phone = $2, cpf=$3, birthday=$4 WHERE id=$5;`, [name, phone, cpf, birthday, id]);
         res.status(200).send("OK");
     } catch (error) {
         res.status(500).send(error.message);
