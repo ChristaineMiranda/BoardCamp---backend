@@ -45,24 +45,17 @@ export async function finalizeRentals(req, res) {
 export async function listRentals(req, res) {
     try {
 
-        const showRentals = await connection.query(`SELECT json_build_object(
-            'id', rentals.id,
-            'customerId', rentals."customerId",
-            'gameId', rentals."gameId",
-            'rentDate', rentals."rentDate",
-            'daysRented', rentals."daysRented",
-            'returnDate', rentals."returnDate",
-            'originalPrice', rentals."originalPrice",
-            'delayFee', rentals."delayFee",
-            'customer', json_build_object(
+        const showRentals = await connection.query(`SELECT 
+            rentals.*,
+            json_build_object(
                 'id', customers.id,
                 'name', customers.name
-            ),
-            'game', json_build_object(
+            ) AS customer,
+            json_build_object(
                 'id', games.id,
                 'name', games.name
-            )
-        ) FROM rentals JOIN customers ON rentals."customerId" = customers.id
+            ) AS game
+         FROM rentals JOIN customers ON rentals."customerId" = customers.id
           JOIN games ON rentals."gameId" = games.id;    
         `);
         res.status(200).send(showRentals.rows);    
@@ -83,6 +76,7 @@ export async function deleteRental(req, res){
             return res.status(400).send("Aluguel ainda não finalizado. Registro não pode ser excluído");
         }
         await connection.query(`DELETE FROM rentals WHERE id=$1;`, [id]);
+        res.status(200).send("OK");
         
     } catch (error) {
         res.status(500).send(error.message);
